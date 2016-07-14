@@ -28,7 +28,7 @@ import numpy as np
 # Imutils for additional convenience functions for OpenCV
 import imutils
 # Optical character recognition
-import pytesser
+from gem_tools.generator import pytesser as pytesser
 # Natural Language Toolkit for NLP tasks
 import nltk
 # visual-logging for visual logs
