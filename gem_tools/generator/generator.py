@@ -11,64 +11,33 @@ import sys
 import logging
 import warnings
 from logging import FileHandler
-import pickle
 import codecs
 
+# if Python2, use C pickle, which is faster
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
+
 # OpenCV 2.4.* for general computer vision tasks
-try:
-    import cv2
-except ImportError:
-    sys.exit("Module OpenCV not found ... aborting.")
-
+import cv2
 # Mahotas for Haralick textures
-try:
-    import mahotas
-except ImportError:
-    sys.exit("Module Mahotas not found ... aborting.")
-
+import mahotas
 # NumPy
-try:
-    import numpy as np
-except ImportError:
-    sys.exit("Module NumPy not found ... aborting.")
-
+import numpy as np
 # Imutils for additional convenience functions for OpenCV
-try:
-    import imutils
-except ImportError:
-    sys.exit("Module imutils not found ... aborting.")
-
+import imutils
 # Optical character recognition
-try:
-    import pytesser
-except ImportError:
-    sys.exit("Module pytesser not found ... aborting.")
-
+import pytesser
 # Natural Language Toolkit for NLP tasks
-try:
-    import nltk
-except ImportError:
-    sys.exit("Module nltk not found ... aborting.")
-
+import nltk
 # visual-logging for visual logs
-try:
-    from vlogging import VisualRecord
-except ImportError:
-    sys.exit("Module vlogging not found ... aborting.")
-
+from vlogging import VisualRecord
 # scikit-image for connected-component analysis
-try:
-    from skimage import measure
-except ImportError:
-    sys.exit("Module skimage not found ... aborting.")
-
+from skimage import measure
 # scikit-learn for machine learning
-try:
-    from sklearn.cross_validation import train_test_split
-    from sklearn.ensemble import RandomForestClassifier
-except ImportError:
-    sys.exit("Module sklearn not found ... aborting.")
-
+from sklearn.cross_validation import train_test_split
+from sklearn.ensemble import RandomForestClassifier
 
 # --------------
 # SET UP LOGGING
