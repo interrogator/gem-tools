@@ -1,1 +1,10 @@
 graphviz >= 0.4.10
+cv2
+mahotas
+numpy
+imutils
+pytesser
+nltk
+vlogging
+skimage
+sklearn

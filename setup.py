@@ -13,4 +13,14 @@ setup(name='gem_tools',
       author_email='tuomo.hiippala@helsinki.fi',
       license='MIT',
       keywords=['multimodality', 'imaging', 'ocr'],
-      install_requires=["graphviz>=0.4.10"])
+      # add current versions?
+      install_requires=["graphviz>=0.4.10",
+                        "cv2",
+                        "mahotas",
+                        "numpy",
+                        "imutils",
+                        "pytesser",
+                        "nltk",
+                        "vlogging",
+                        "skimage",
+                        "sklearn"])
