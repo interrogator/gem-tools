@@ -23,23 +23,21 @@ __all__ = ['classify',
            'tokenize',
            'vlog']
 
-import gem_tools.pipeline as gem
-
-from gem.generator import (classify
-                 describe
-                 detect_roi
-                 draw_roi
-                 extract_bu
-                 false_positives
-                 generate_annotation
-                 generate_graphics
-                 generate_text
-                 preprocess
-                 project
-                 redraw
-                 load_model
-                 sort_contours
-                 tokenize
-                 vlog)
+from gem_tools.generator import (classify,
+                                 describe,
+                                 detect_roi,
+                                 draw_roi,
+                                 extract_bu,
+                                 false_positives,
+                                 generate_annotation,
+                                 generate_graphics,
+                                 generate_text,
+                                 preprocess,
+                                 project,
+                                 redraw,
+                                 load_model,
+                                 sort_contours,
+                                 tokenize,
+                                 vlog)
 
 from gem_tools.pipeline import process
