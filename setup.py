@@ -1,3 +1,6 @@
+import setuptools
+from setuptools import setup, find_packages
+from setuptools.command.install import install
 
 setup(name='gem-tools',
       version='0.0.1',
