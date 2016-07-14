@@ -1,5 +1,7 @@
 """A simple function that runs the entire pipeline"""
 
+from __future__ import print_function
+
 def process(filename, kernel=(11, 11), iterations=2, outfile=False, **kwargs):
     """
     Run the pipeline
@@ -7,8 +9,15 @@ def process(filename, kernel=(11, 11), iterations=2, outfile=False, **kwargs):
     :param filename: Path to file
     :type filename: `str`
 
+    :param kernel: size of kernel
+    :type kernel: `tuple` of two `int`s
+
     """
 
+    import os
+    import sys
+
+    # we probably don't need all of these?
     from gem_tools.generator import (classify,
                                      describe,
                                      detect_roi,
@@ -26,56 +35,64 @@ def process(filename, kernel=(11, 11), iterations=2, outfile=False, **kwargs):
                                      tokenize,
                                      vlog)
 
-    from gem_tools.gui import the_gui
-
-    import os
-    import sys
-
+    # find out our python version so we can set raw_input/input
     PYTHON_VERSION = sys.version_info.major
     INPUTFUNC = input if PYTHON_VERSION == 3 else raw_input
 
+    # make our model: anything customisable here?
     model = load_model()
 
-    preprocessed_image, input_image, filename, filepath = preprocess(filename)
+    # do preprocessing
+    image, original, filename, filepath = preprocess(filename)
 
+    # don't know what these do, sorry
     contours = detect_roi(image, kernel, iterations)
-
     sorted_contours = sort_contours(contours)
-
     classified_contours, contour_types = classify(sorted_contours, image, model)
 
+    # generate an output filename if none specified
     if not outfile:
-        f, ext = os.path.splitext(filename)
-        outfile = '%s-out.%s' % (f, ext)
+        outfile = '%s-out.%s' % os.path.splitext(filename)
 
-    # got to pop this up in a PIL window, simple gui or something
-    the_gui(filename=outfile)
-    #Image(filename=outfile)
-    
-    false_positives = false_positives(INPUTFUNC())
+    def process_in_jupyter():
+        """loop over a user input, removing false positives"""
+        from IPython.display import Image
+        Image(filename=outfile)
+        false_positives = True
+        while false_positives:
+            false_positives = INPUTFUNC()
+            false_positives = ''.join([i for i in false_positives if i.isnum() or i.isspace()])
+            fps = [int(i) for i in false_positives.split()]
+            updated_contours, updated_contour_types = redraw(image, classified_contours, contour_types, fps)
+        hires_contours = project(image, original, updated_contours)
+        generate_annotation(filename, original, hires_contours, updated_contour_types)
 
-    updated_contours, updated_contour_types = redraw(image, classified_contours, contour_types, false_positives)
 
-    f, ext = os.path.splitext(outfile)
-    updated_out = '%s-updated.%s' % (f, ext)
-    
-    the_gui(filename=updated_out)
-    #Image(filename=updated_out)
+    # prefer jupyter, but also allow tkinter app
+    # need to specify the error type
 
-    mark = INPUTFUNC()
+    try:
+        process_in_jupyter()
 
-    if mark == 'y':
-        updated_contours, updated_contour_types = draw_roi(image, updated_contours, updated_contour_types)
-    else:
-        pass
+    except:
+        from gem_tools.gui import the_gui
+        the_gui(filename=outfile,
+                image=image,
+                classified_contours=classified_contours,
+                contour_types=contour_types)
 
-    hires_contours = project(image, original, updated_contours)
+    # need to implement this!
+    #if mark == 'y':
+    #    updated_contours, updated_contour_types = draw_roi(image, updated_contours, updated_contour_types)
+    #else:
+    #    pass
 
     generate_annotation(filename, original, hires_contours, updated_contour_types)
+    print('\nDone!\n')
 
     return
 
 # run from command line using any args passed in
 if __name__ == "__main__":
     import sys
-    return process(*sys.argv[1:])
+    process(*sys.argv[1:])
