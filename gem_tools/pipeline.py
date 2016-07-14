@@ -68,6 +68,7 @@ def process(filename, kernel=(11, 11), iterations=2, outfile=False, **kwargs):
         generate_annotation(filename, original, hires_contours, updated_contour_types)
 
 
+
     # prefer jupyter, but also allow tkinter app
     # need to specify the error type
 
@@ -87,7 +88,8 @@ def process(filename, kernel=(11, 11), iterations=2, outfile=False, **kwargs):
     #else:
     #    pass
 
-    generate_annotation(filename, original, hires_contours, updated_contour_types)
+        generate_annotation(filename, original, hires_contours, updated_contour_types)
+    
     print('\nDone!\n')
 
     return
