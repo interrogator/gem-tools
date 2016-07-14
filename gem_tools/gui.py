@@ -3,9 +3,11 @@
 from tkinter import Tk, Label, Button
 
 class GemGUI:
-    def __init__(self, master):
+    def __init__(self, master, **kwargs):
         self.master = master
         master.title("gem-tools")
+
+        self.filename = kwargs.pop('filename')
 
         self.label = Label(master, text="Simple gem-interface!")
         self.label.pack()
@@ -19,6 +21,13 @@ class GemGUI:
     def greet(self):
         print("Testing!")
 
+    # show the image using pil, and have some interface for removing by number...
+
 root = Tk()
-my_gui = GemGUI(root)
+the_gui = GemGUI(root, **kwargs)
 root.mainloop()
+
+
+# this means a person can run "python -m gem_tools.gui"
+if __name__ == "__main__":
+    the_gui()

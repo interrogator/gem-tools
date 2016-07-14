@@ -26,6 +26,8 @@ def process(filename, kernel=(11, 11), iterations=2, outfile=False, **kwargs):
                                      tokenize,
                                      vlog)
 
+    from gem_tools.gui import the_gui
+
     import os
     import sys
 
@@ -47,7 +49,8 @@ def process(filename, kernel=(11, 11), iterations=2, outfile=False, **kwargs):
         outfile = '%s-out.%s' % (f, ext)
 
     # got to pop this up in a PIL window, simple gui or something
-    Image(filename=outfile)
+    the_gui(filename=outfile)
+    #Image(filename=outfile)
     
     false_positives = false_positives(INPUTFUNC())
 
@@ -56,7 +59,8 @@ def process(filename, kernel=(11, 11), iterations=2, outfile=False, **kwargs):
     f, ext = os.path.splitext(outfile)
     updated_out = '%s-updated.%s' % (f, ext)
     
-    Image(filename=updated_out)
+    the_gui(filename=updated_out)
+    #Image(filename=updated_out)
 
     mark = INPUTFUNC()
 
@@ -71,3 +75,7 @@ def process(filename, kernel=(11, 11), iterations=2, outfile=False, **kwargs):
 
     return
 
+# run from command line using any args passed in
+if __name__ == "__main__":
+    import sys
+    return process(*sys.argv[1:])
