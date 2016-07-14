@@ -2,10 +2,26 @@
 import sys
 
 # GeM generator
-try:
-    from generator import *
-except ImportError:
-    sys.exit("GeM generator not found ... aborting.")
+from generator import (classify,
+                                 describe,
+                                 detect_roi,
+                                 draw_roi,
+                                 extract_bu,
+                                 false_positives,
+                                 generate_annotation,
+                                 generate_graphics,
+                                 generate_text,
+                                 preprocess,
+                                 project,
+                                 redraw,
+                                 load_model,
+                                 sort_contours,
+                                 tokenize,
+                                 vlog)
+
 
 # Jupyter notebook
-from IPython.display import Image
+try:
+    from IPython.display import Image
+except:
+    pass
