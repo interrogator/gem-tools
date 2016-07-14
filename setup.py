@@ -22,5 +22,5 @@ setup(name='gem_tools',
                         "pytesser",
                         "nltk",
                         "vlogging",
-                        "skimage",
+                        "scikit-image",
                         "sklearn"])

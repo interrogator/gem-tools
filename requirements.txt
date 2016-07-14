@@ -6,5 +6,5 @@ imutils
 pytesser
 nltk
 vlogging
-skimage
+scikit-image
 sklearn
