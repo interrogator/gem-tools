@@ -1,5 +1,6 @@
 """gem-tools simple gui"""
 
+# python 2/3 safe imports?
 try:
     import tkinter
     from tkinter import *
@@ -10,21 +11,26 @@ except ImportError:
     import Tkinter as tkinter
     from Tkinter import Tk, Label, Button, Text
 
+
 class GemGUI:
     def __init__(self, root, filepath, image, classified_contours, contour_types, **kwargs):
         
         self.root = root
         root.title("gem-tools")
         self.filepath = filepath
+        # we might need to somehow return these two things:
+        self.updated_contours = None
+        self.hires_contours = None
 
-        def delete_numbers(nums, init=False):
-            from gem_tools.generator import redraw
+        def delete_numbers(self, nums, init=False):
+            from gem_tools.generator import redraw, project
             if init:
                 redraw(image, classified_contours, contour_types, nums)
             else:
                 updated_contours, updated_contour_types = redraw(image, classified_contours, contour_types, nums)
                 hires_contours = project(image, original, updated_contours)
-
+                self.updated_contours = updated_contours
+                self.hires_contours = hires_contours
 
         def show_image(filepath):
             """show an image in tk app"""
@@ -40,12 +46,11 @@ class GemGUI:
             self.label.image = self.photo # keep a reference!
             self.label.pack()
 
-
         def rerun(init=False):
             false_positives = self.remove_box.get(1.0, 'end')
             false_positives = ''.join([i for i in false_positives if i.isdigit() or i.isspace()])
             fps = [int(i) for i in false_positives.split()]
-            delete_numbers(fps, init=init)
+            delete_numbers(self, fps, init=init)
             show_image(self.filepath)
             
         # here, put a button for deleting numbers

@@ -76,17 +76,13 @@ def process(filename, kernel=(11, 11), iterations=2, outfile=False, **kwargs):
         process_in_jupyter()
 
     except:
+        # can we return updated_contours from this, so we can do project() and generate_annotation()?
         from gem_tools.gui import the_gui
         the_gui(filepath=outfile,
                 image=image,
                 classified_contours=classified_contours,
                 contour_types=contour_types)
 
-    # need to implement this!
-    #if mark == 'y':
-    #    
-    #else:
-    #    pass
         # need updated_contours ... can we return it from gui?
         hires_contours = project(image, original, updated_contours)
         generate_annotation(filename, original, hires_contours, updated_contour_types)

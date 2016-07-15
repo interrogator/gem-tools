@@ -6,6 +6,8 @@
 # IMPORT THE NECESSARY PACKAGES
 # -----------------------------
 
+from __future__ import print_function
+
 # From Python site packages
 import sys
 sys.path.append('/usr/local/lib/python2.7/site-packages')
@@ -610,7 +612,7 @@ def generate_annotation(filename, original, hires_contours, updated_contour_type
     layout_xml.close()
     base_xml.close()
 
-    print "Successfully generated annotation into\n", base_file_name, '\n', layout_file_name
+    print("Successfully generated annotation into\n", base_file_name, '\n', layout_file_name)
 
 def generate_graphics(original, x, w, y, h, num, base_layout_mapping):
     """
@@ -776,7 +778,10 @@ def redraw(image, classified_contours, contour_types, fp_list):
     if fp_list:
         # Loop over the list and pop out false positives.
         for fp in fp_list:
-            contour_types.pop(fp)
+            try:
+                contour_types.pop(fp)
+            except KeyError:
+                print("'%d' not in counter types" % fp)
 
         # Define a new numpy array with the false positives removed.
         updated_contours = np.array(np.delete(classified_contours, fp_list, 0), dtype="int32")
