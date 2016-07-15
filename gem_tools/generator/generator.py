@@ -8,6 +8,8 @@
 
 # From Python site packages
 import sys
+sys.path.append('/usr/local/lib/python2.7/site-packages')
+
 import logging
 import warnings
 from logging import FileHandler
@@ -44,6 +46,12 @@ from sklearn.ensemble import RandomForestClassifier
 # --------------
 
 logger = logging.getLogger("generate_gem")
+
+# make directory if need be
+import os
+if not os.path.isdir('output'):
+    os.makedirs('output')
+
 fh = FileHandler("output/generate_gem.html", mode="w")
 
 logger.setLevel(logging.DEBUG)
@@ -57,7 +65,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 # DEFINE FUNCTIONS
 # ----------------
 
-def classify(contours, img, model):
+def classify(contours, img, model, outfile='output/image_contours.png'):
     """
     Classify regions of interest detected in the input image.
 
@@ -143,7 +151,7 @@ def classify(contours, img, model):
             contour_types[number] = prediction
 
     # Write the image on the disk
-    cv2.imwrite("output/image_contours.png", image)
+    cv2.imwrite(outfile, image)
 
     # Return the dictionaries
     return contours, contour_types
@@ -859,14 +867,22 @@ def load_model():
     """
 
     # Load the data
-    datafile = "model/data.pkl"
-    td_file = open(datafile, 'r')
-    data = pickle.load(td_file)
+    # find it first ... may need to make a function for this
+    import os
+    if os.path.isdir('model'):
+        datafile = os.path.join('model', 'data.pkl')
+        labelfile = os.path.join('model', 'labels.pkl')
+    elif os.path.isdir(os.path.join('gem_tools', 'model')):
+        datafile = os.path.join('gem_tools', 'model', 'data.pkl')
+        labelfile = os.path.join('gem_tools', 'model', 'labels.pkl')
+    else:
+        raise ValueError('Cannot find model directory.')
 
-    # Load the labels
-    labelfile = "model/labels.pkl"
-    ld_file = open(labelfile, 'r')
-    labels = pickle.load(ld_file)
+    # load the model data and labels using with context manager
+    with open(datafile, 'r') as td_file:
+        data = pickle.load(td_file)
+    with open(labelfile, 'r') as ld_file:
+        labels = pickle.load(ld_file)
 
     # Split the data for training and testing
     (traindata, testdata, trainlabels, testlabels) = train_test_split(np.array(data), np.array(labels),

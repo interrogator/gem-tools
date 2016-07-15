@@ -45,14 +45,15 @@ def process(filename, kernel=(11, 11), iterations=2, outfile=False, **kwargs):
     # do preprocessing
     image, original, filename, filepath = preprocess(filename)
 
+    # generate an output filename if none specified
+    if not outfile:
+        n, e = os.path.splitext(filepath)
+        outfile = '%s-out%s' % (n, e)
+
     # don't know what these do, sorry
     contours = detect_roi(image, kernel, iterations)
     sorted_contours = sort_contours(contours)
-    classified_contours, contour_types = classify(sorted_contours, image, model)
-
-    # generate an output filename if none specified
-    if not outfile:
-        outfile = '%s-out.%s' % os.path.splitext(filename)
+    classified_contours, contour_types = classify(sorted_contours, image, model, outfile=outfile)
 
     def process_in_jupyter():
         """loop over a user input, removing false positives"""
@@ -68,7 +69,6 @@ def process(filename, kernel=(11, 11), iterations=2, outfile=False, **kwargs):
         generate_annotation(filename, original, hires_contours, updated_contour_types)
 
 
-
     # prefer jupyter, but also allow tkinter app
     # need to specify the error type
 
@@ -77,17 +77,18 @@ def process(filename, kernel=(11, 11), iterations=2, outfile=False, **kwargs):
 
     except:
         from gem_tools.gui import the_gui
-        the_gui(filename=outfile,
+        the_gui(filepath=outfile,
                 image=image,
                 classified_contours=classified_contours,
                 contour_types=contour_types)
 
     # need to implement this!
     #if mark == 'y':
-    #    updated_contours, updated_contour_types = draw_roi(image, updated_contours, updated_contour_types)
+    #    
     #else:
     #    pass
-
+        # need updated_contours ... can we return it from gui?
+        hires_contours = project(image, original, updated_contours)
         generate_annotation(filename, original, hires_contours, updated_contour_types)
     
     print('\nDone!\n')

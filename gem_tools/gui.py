@@ -1,56 +1,69 @@
 """gem-tools simple gui"""
 
 try:
-    from tkinter import Tk, Label, Button
+    import tkinter
+    from tkinter import *
+    from tkinter import Tk, Label, Button, Text
 except ImportError:
+    import Tkinter
+    from Tkinter import *
     import Tkinter as tkinter
-    from Tkinter import Tk, Label, Button
+    from Tkinter import Tk, Label, Button, Text
 
 class GemGUI:
-    def __init__(self, master, filepath, image, classified_contours, contour_types, **kwargs):
+    def __init__(self, root, filepath, image, classified_contours, contour_types, **kwargs):
         
-        self.master = master
-        master.title("gem-tools")
+        self.root = root
+        root.title("gem-tools")
         self.filepath = filepath
 
-        # here, put a button for deleting numbers
-        self.remove_box = Text(root, undo=True, wrap=WORD)
-        self.remove_box.pack()
-        self.remove_box.insert(END, 'Numbers here')
+        def delete_numbers(nums, init=False):
+            from gem_tools.generator import redraw
+            if init:
+                redraw(image, classified_contours, contour_types, nums)
+            else:
+                updated_contours, updated_contour_types = redraw(image, classified_contours, contour_types, nums)
+                hires_contours = project(image, original, updated_contours)
 
-        self.re_run = Button(master, text="Re-run", command=rerun)
+
+        def show_image(filepath):
+            """show an image in tk app"""
+            import PIL
+            from PIL import Image, ImageTk
+            self.image = Image.open(self.filepath)
+            basewidth = 300
+            wpercent = (basewidth/float(self.image.size[0]))
+            hsize = int((float(self.image.size[1])*float(wpercent)))
+            self.image = self.image.resize((basewidth,hsize), PIL.Image.ANTIALIAS)
+            self.photo = ImageTk.PhotoImage(self.image)
+            self.label = Label(image=self.photo)
+            self.label.image = self.photo # keep a reference!
+            self.label.pack()
+
+
+        def rerun(init=False):
+            false_positives = self.remove_box.get(1.0, 'end')
+            false_positives = ''.join([i for i in false_positives if i.isdigit() or i.isspace()])
+            fps = [int(i) for i in false_positives.split()]
+            delete_numbers(fps, init=init)
+            show_image(self.filepath)
+            
+        # here, put a button for deleting numbers
+        self.remove_box = Text(root, undo=True, height=5, width=40)
+        self.remove_box.pack()
+        self.remove_box.insert('end', 'Numbers here')
+
+        rerun(init=True)
+        self.re_run = Button(root, text="Run", command=rerun)
         self.re_run.pack()
 
-        self.close_button = Button(master, text="Close", command=master.quit)
+        self.close_button = Button(root, text="Close", command=root.quit)
         self.close_button.pack()
 
-    def show_image(self, filepath):
-        """show an image in tk app"""
-        from PIL import Image, ImageTk
-        self.image = Image.open(self.filepath)
-        self.photo = ImageTk.PhotoImage(self.image)
-        self.label = Label(image=self.photo)
-        label.image = photo # keep a reference!
-        label.pack()
-
-    def delete_numbers(nums):
-        from gem_tools.generator import redraw
-        updated_contours, updated_contour_types = redraw(image, classified_contours, contour_types, nums)
-        hires_contours = project(image, original, updated_contours)
-
-    def rerun(self):
-        false_positives = self.remove_box.get(1.0, END)
-        false_positives = ''.join([i for i in false_positives if i.isnum() or i.isspace()])
-        fps = [int(i) for i in false_positives.split()]
-        delete_numbers(fps)
-        show_image()
-
-
-    # show the image using pil, and have some interface for removing by number...
-
-root = Tk()
-the_gui = GemGUI(root, filepath, image, classified_contours, contour_types)
-root.mainloop()
+def the_gui(filepath, image, classified_contours, contour_types):
+    root = Tk()
+    the_gui = GemGUI(root, filepath, image, classified_contours, contour_types)
+    root.mainloop()
 
 # this means a person can run "python -m gem_tools.gui"
 if __name__ == "__main__":
